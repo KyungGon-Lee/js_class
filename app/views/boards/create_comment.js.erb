@@ -1,0 +1,12 @@
+  // 5. 댓글을 보여주는 table의 tbody에 추가해줌
+  alert('댓글');
+$('.comment-list').prepend(`
+<tr>
+  <td><%= @comment.contents %></td>
+  <td></td>
+  <td><button class="btn btn-outline-danger">삭제</button></td>
+</tr>
+`);
+// `` 물결표시임(멀티라인 지원)
+// 6. input 태그를 비워줌
+$('#comment-input').val('');

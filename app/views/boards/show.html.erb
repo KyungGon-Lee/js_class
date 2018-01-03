@@ -8,7 +8,88 @@
   <strong>Contents:</strong>
   <%= @board.contents %>
 </p>
+<!-- 홈 앞에 아이콘 넣을 떄 뒤에다가 html_safe 넣어줘야 함 -->
+<!-- fa-spin 빙글빙글 돌아감 -->
+<% if user_signed_in? and @board.require_permission?(current_user) %>
+<button class="btn btn-outline-danger delete"><i class="fas fa-trash fa-spin"></i>삭제요청</button>
+<%= link_to '삭제', board_path(@board), class: 'btn btn-danger delete', method: :delete, data: { confirm: '삭제할건가영?' } %> |
+<%= link_to '<i class="fas fa-cog fa-spin"></i>수정'.html_safe, edit_board_path(@board), class: 'btn btn-warning' %> |
+<% end %>
+<%= link_to '<i class="fas fa-home fa-spin"></i>홈으로'.html_safe, boards_path, class: 'btn btn-dark' %> |
+<% if @like.length > 0 %>
+<a><button type="button" class="btn btn-primary like"><i class="fas fa-thumbs-up fa-spin"></i>좋아요(<span id="like-count"><%= @board.likes.count %></span>)</button></a>
+<% else %>
+<a><button type="button" class="btn btn-outline-primary like"><i class="fas fa-thumbs-up fa-spin"></i>좋아요(<span id="like-count"><%= @board.likes.count %></span>)</button></a>
+<% end %>
 
-<%= link_to '수정', edit_board_path(@board), class: 'btn btn-primary' %> |
-<%= link_to '홈으로', boards_path, class: 'btn btn-dark' %> |
-<%= link_to '삭제', @board, class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure?' } %>
+<form id="comment-form" my-2 my-lg-0>
+  <input class="form-control mr-sm-2" type="text" placeholder="댓글을씁니당." id="comment-input">
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-pencil-alt fa-spin"></i>댓글 쓰기</button>
+</form>
+<table class="table">
+  <thead>
+    <tr>
+      <th>내용</th>
+      <th colspan='2'></th>
+    </tr>
+  </thead>
+  <tbody class="comment-list">
+    <% @board.comments.reverse.each do |comment| %>
+    <tr>
+      <td><%= comment.contents %></td>
+      <td><button class="btn btn-outline-danger delete-comment" data-id="<% comment.id %>"><i class="fas fa-trash fa-spin"></i>삭제</button></td>
+      <td></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<% content_for :script do %>
+<script>
+  $(function(){
+
+    // 1. 좋아요 버튼을 눌렀을 때
+    $('.like').on('click', function(){
+      // 2. ajax를 이용해서 /board/:board_id/like 라는 url에 요청을 보냄.
+      $.ajax({
+        url: '/boards/<%= @board.id %>/like',
+        method: "GET"
+      });
+    });
+
+  // 댓글 기능
+  // 1. form이 제출 되면
+  $('#comment-form').on('submit', function(e){
+    // 2. form의 기본 이벤트를 막아주고
+    e.preventDefault();
+    // 3. form 안의 input 태그에서 입력한 값을 가져온 다음
+    var data = $('#comment-input').val();
+  // 4. 해당 값을 댓글을 등록하는 url로 보냄(ajax이용)
+  $.ajax({
+    url: '/boards/<%= @board.id %>/comments',
+    method: 'POST',
+    data: {
+      contents: data
+    }
+    });
+  });
+  // 글 삭제
+  $('.delete').on('click', function(){
+    $.ajax({
+      url: "/boards/<%= @board.id %>.js",
+      method: "DELETE"
+    })
+  })
+  // 댓글 삭제
+  $('.delete-comment').on('click',function(){
+    var id = $(this).data('id');
+    $.ajax({
+      url: '/boards/<%= @board.id %>/comments/' + id,
+      method: "DELETE"
+    });
+  });
+
+})
+</script>
+<% end %>

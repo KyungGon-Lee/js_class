@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
-  resources :boards
+  resources :boards do
+    member do
+      post '/comments' => 'boards#create_comment', as: :create_comment_to
+    end
+    collection do
+      get '/:board_id/like' => 'boards#user_like_board', as: :user_like
+    end
+  end
   root 'boards#index' # 보트컨트롤러에 인덱스
 
   # sign in
