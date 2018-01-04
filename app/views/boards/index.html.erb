@@ -6,8 +6,13 @@
       <th width="60%">제목</th>
     </tr>
   </thead>
+  <%= link_to '새글쓰기', new_board_path, class: 'btn btn-dark fa-spin' %>
+  <a class='btn btn-warning fa-spin' id='change-title'>제목 바꾸기</a>
+  <a class='btn btn-danger color-btn fa-spin' haha="text-danger">빨강</a>
+  <a class='btn btn-primary color-btn fa-spin' haha="text-primary">파랑</a>
+  <a class='btn btn-warning color-btn fa-spin' haha="text-warning">노랑</a>
 
-  <tbody>
+  <tbody class="boards">
     <% @boards.each do |board| %>
       <tr class="board" data-id="<%= board.id %>">
         <td><%= board.id %></td>
@@ -17,17 +22,37 @@
   </tbody>
 </table>
 
-<br>
-
-<%= link_to '새글쓰기', new_board_path, class: 'btn btn-dark fa-spin' %>
-<a class='btn btn-warning fa-spin' id='change-title'>제목 바꾸기</a>
-<a class='btn btn-danger color-btn fa-spin' haha="text-danger">빨강</a>
-<a class='btn btn-primary color-btn fa-spin' haha="text-primary">파랑</a>
-<a class='btn btn-warning color-btn fa-spin' haha="text-warning">노랑</a>
 
 <% content_for :script do %>
 <!-- 자바 스크립트 시작 -->
-<script src="tr_location.js"></script>
+<script>
+  $(document).ready(function(){
+    // setInterval(function(){alert("hello"); }, 3000);
+    $('.boards').on('click', '.board', function() {
+      // this를 JQuery 객체로 바꿔줘야 함
+      location.href = '/boards/' + $(this).data('id');
+    })
+    var page_count = 2;
+    setInterval(function(){
+      if($(window).scrollTop() >= $(document).height() - $(window).height() - 0.5){
+        console.log("제일 아래 도착했다!!");
+        // 1. 화면 최하단에 도착했을 때
+
+        // 2. 추가적인 40개의 element에 대한 요청을 보냄
+        $.ajax({
+          url: '/boards/page_scroll',
+          method: 'GET',
+          data: {
+            page: page_count++
+          }
+        })
+        // 3. 요청해서 응답으로 받은 element를 최하단에 추가
+      }
+    }, 500)
+  })
+</script>
+<!-- <script src="tr_location.js"></script> -->
+
 <script src="change_color.js"></script>
 <script src="change_title.js"></script>
 <% end %>

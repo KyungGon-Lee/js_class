@@ -17,6 +17,14 @@ class SessionsController < ApplicationController
       end
   end
 
+  def check_email
+    # 유저 없으면 트루
+    @email = params[:email]
+    @tmp = User.find_by(email: params[:email]).nil?
+    @password = params[:password]
+    @password_confirmation = params[:password_confirmation]
+  end
+
   def signin
 
   end

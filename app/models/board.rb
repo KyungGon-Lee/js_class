@@ -3,6 +3,8 @@ class Board < ActiveRecord::Base
   has_many :likes
   has_many :comments
 
+  paginates_per 50
+  # 50페이지로 디폴트값 변경
   def require_permission?(user)
     # 보드의 객체중 하나가 self가 됨
     # board = Board.create(:title "김밥킹")

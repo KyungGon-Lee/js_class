@@ -11,7 +11,7 @@ User.create(
   password: "123123"
 )
 
-20.times do
+1000.times do
 Board.create(
   title: Faker::Superhero.name,
   contents: Faker::Superhero.name,

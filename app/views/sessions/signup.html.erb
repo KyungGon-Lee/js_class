@@ -1,10 +1,32 @@
 <%= form_tag(signup_path, method: 'POST', class: "form-signin") do %>
-  <h2 class="form-signin-heading">Please sign up</h2>
+  <h2 class="form-signin-heading text-center">회원가입 하깅</h2>
   <label for="inputEmail" class="sr-only">Email address</label>
-  <input type="email" name="email" class="form-control" placeholder="Email address" autofocus>
-  <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" name="password" class="form-control" placeholder="Password">
-  <label for="inputPassword" class="sr-only">Password Confirmation</label>
-  <input type="password" name="password_confirmation" class="form-control" placeholder="Password">
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+  <input type="email" name="email" class="form-control text-center" placeholder="이메일 주소" autofocus>
+  <label for="inputPassword" class="sr-only">비밀번호</label>
+  <input type="password" name="password" class="form-control text-center" placeholder="비밀번호">
+  <label for="inputPassword" class="sr-only">비밀번호 확인</label>
+  <input type="password" name="password_confirmation" class="form-control text-center" placeholder="비밀번호 확인">
+  <button class="btn btn-lg btn-primary btn-block" type="submit" disabled="false">회원가입 하깅</button>
+  <% end %>
+
+
+  <% content_for :script do %>
+    <script>
+      $(function(){
+
+        // 인풋 찾는데 네임이 email인걸 찾음
+        $('input[name=email]').on('change', function(){
+          var id = $(this).val();
+          $.ajax({
+            url: '/check_email',
+            method: 'POST',
+            data: {
+              email: id
+            }
+
+          })
+        })
+
+      })
+    </script>
   <% end %>
